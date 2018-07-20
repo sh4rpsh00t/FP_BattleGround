@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/InputSettings.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -80,6 +81,10 @@ AFP_BattleGroundCharacter::AFP_BattleGroundCharacter()
 	VR_MuzzleLocation->SetRelativeLocation(FVector(0.000004, 53.999992, 10.000000));
 	VR_MuzzleLocation->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));		// Counteract the rotation of the VR gun model.
 
+	// Create movement component
+	PlayerMovement = GetCharacterMovement();
+	PlayerMovement->MaxWalkSpeed = DefaultMaxWalkSpeed;
+
 	// Uncomment the following line to turn motion controllers on by default:
 	//bUsingMotionControllers = true;
 }
@@ -136,6 +141,10 @@ void AFP_BattleGroundCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAxis("TurnRate", this, &AFP_BattleGroundCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AFP_BattleGroundCharacter::LookUpAtRate);
+	
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFP_BattleGroundCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AFP_BattleGroundCharacter::SprintEnd);
+
 }
 
 void AFP_BattleGroundCharacter::OnFire()
@@ -282,6 +291,16 @@ void AFP_BattleGroundCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AFP_BattleGroundCharacter::SprintStart()
+{
+	PlayerMovement->MaxWalkSpeed = MaxWalkSprintSpeed;
+}
+
+void AFP_BattleGroundCharacter::SprintEnd()
+{
+	PlayerMovement->MaxWalkSpeed = DefaultMaxWalkSpeed;
 }
 
 bool AFP_BattleGroundCharacter::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)

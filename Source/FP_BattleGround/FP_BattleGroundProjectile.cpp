@@ -8,7 +8,7 @@ AFP_BattleGroundProjectile::AFP_BattleGroundProjectile()
 {
 	// Use a sphere as a simple collision representation
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	CollisionComp->InitSphereRadius(5.0f);
+	CollisionComp->InitSphereRadius(0.45f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
 	CollisionComp->OnComponentHit.AddDynamic(this, &AFP_BattleGroundProjectile::OnHit);		// set up a notification for when this component hits something blocking
 

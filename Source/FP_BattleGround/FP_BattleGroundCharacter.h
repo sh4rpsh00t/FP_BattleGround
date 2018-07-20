@@ -7,6 +7,7 @@
 #include "FP_BattleGroundCharacter.generated.h"
 
 class UInputComponent;
+class UCharacterMovementComponent;
 
 UCLASS(config=Game)
 class AFP_BattleGroundCharacter : public ACharacter
@@ -45,6 +46,9 @@ class AFP_BattleGroundCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UMotionControllerComponent* L_MotionController;
 
+	UPROPERTY(EditAnywhere)
+	class UCharacterMovementComponent* PlayerMovement;
+
 public:
 	AFP_BattleGroundCharacter();
 
@@ -80,6 +84,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint32 bUsingMotionControllers : 1;
 
+	UPROPERTY(EditAnywhere)
+	float DefaultMaxWalkSpeed = 450.f;
+
+	UPROPERTY(EditAnywhere)
+	float MaxWalkSprintSpeed = 700.f;
+
 protected:
 	
 	/** Fires a projectile. */
@@ -105,6 +115,10 @@ protected:
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
 	void LookUpAtRate(float Rate);
+
+	void SprintStart();
+
+	void SprintEnd();
 
 	struct TouchData
 	{
